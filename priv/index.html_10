@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Websocket client</title>
+</head>
+
+<body>
+
+<div id="info"></div>
+<br>
+<button type="button" onclick="sendTxt();">send</button>
+<br><br>
+<input type="text" id="myInput" oninput="input1()">
+<script type="text/javascript">
+function sendTxt(){
+	console.log("Hello World");
+	writeInfo("Glurk");
+}
+function writeInfo(Info){
+	document.getElementById("info").innerHTML = Info;
+
+}
+$("#txtInput").on('keyup', function (event) {
+	 if (event.keyCode === 13) {
+			console.log("Enter key pressed!!!!!");
+	 }
+});
+function input1(){
+	var x = document.getElementById("myInput").value;
+	console.log(x);
+	if (x =="\r"){
+		writeInfo(x);
+	}
+}
+
+</script>
+
+</html>
