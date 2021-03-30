@@ -14,15 +14,22 @@ websocket_init(State) ->
     {reply, {text, <<"Let's roll">>}, State}.
 
 websocket_handle({text, MsgBin}, State) ->
-    Msg=binary_to_list(MsgBin),
-    io:format("~p~n",[{?MODULE,?FUNCTION_NAME,?LINE,Msg}]),
-    {Hours, Minutes, Secs} = time(),
-    
-    {
-     reply, 
-     {text, io_lib:format("[~w:~w:~w]: Server received: ~s", [Hours, Minutes, Secs, Msg]) },
-     State
-    };
+    Reply = case action(MsgBin) of
+		{reply,Result}->
+		    {reply,Result,State};
+		no_reply->
+		    {ok,State}
+	    end,
+    Reply;
+
+   % Msg=binary_to_list(MsgBin),
+   % io:format("~p~n",[{?MODULE,?FUNCTION_NAME,?LINE,Msg}]),
+   % {Hours, Minutes, Secs} = time(),
+   % {
+   %  reply, 
+   %  {text, io_lib:format("[~w:~w:~w]: Server received: ~s", [Hours, Minutes, Secs, Msg]) },
+   %  State
+   % };
 websocket_handle(Other, State) ->  %Ignore
     io:format("[Other,State~p~n",[{?MODULE,?LINE,Other,State}]),
     {ok, State}.
@@ -32,3 +39,19 @@ websocket_info({text, Text}, State) ->
     {reply, {text, Text}, State};
 websocket_info(_Other, State) ->
     {ok, State}.
+
+%% services 
+
+action(Bin)->
+    DoReply=true,
+    Reply=case DoReply of
+	      false->
+		  'do someting with Bin, but no reply',
+		  no_reply;
+	      true->
+		  Msg=binary_to_list(Bin),
+		  io:format("~p~n",[{?MODULE,?FUNCTION_NAME,?LINE,Msg}]),
+		  {Hours, Minutes, Secs} = time(),
+    		  {reply,{text, io_lib:format("[~w:~w:~w]: Server received: ~s", [Hours, Minutes, Secs, Msg])}}
+	  end,
+    Reply.
